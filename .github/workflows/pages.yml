@@ -11,7 +11,7 @@ on:
     branches:
       - "main"
     paths:
-      - "docs/**"
+      - "site-files/**"
 
 #on:
 #push:
@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: docs
+        working-directory: site-files
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -47,7 +47,7 @@ jobs:
           ruby-version: '3.1' # Not needed with a .ruby-version file
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
           cache-version: 0 # Increment this number if you need to re-download cached gems
-          working-directory: '${{ github.workspace }}/docs'
+          working-directory: '${{ github.workspace }}/site-files'
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v3
@@ -60,7 +60,7 @@ jobs:
         # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v1
         with:
-          path: "docs/_site/"
+          path: "site-files/_site/"
 
   # Deployment job
   deploy:
