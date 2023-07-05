@@ -26,6 +26,7 @@ baseurl: /docs/
 
 # Build settings
 markdown: kramdown
+#remote-theme: just-the-docs
 theme: just-the-docs
 plugins:
   - jekyll-feed
