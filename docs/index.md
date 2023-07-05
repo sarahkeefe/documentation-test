@@ -1,13 +1,6 @@
-# Testing out documentation site with Github Pages
+---
+# Feel free to add content and custom Front Matter to this file.
+# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 
-It's going great.
-
-## Did you hear what I said?
-
-It's going great!!!
-
-```
-rm -rf *
-```
-
-It's going great.
+layout: home
+---
