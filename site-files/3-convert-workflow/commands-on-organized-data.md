@@ -14,6 +14,7 @@ Here is the folder structure that this example will use. This expects that you w
 
 Here is an example folder tree of the folder and file organization this tutorial will use. 
 
+```
 ├── containerization_tutorial (A folder you created for this project)
     ├── 1-command_list.sh
     ├── 2-hardcoded_simple.sh
@@ -34,6 +35,7 @@ Here is an example folder tree of the folder and file organization this tutorial
                 ├── sub-OAS30001_sess-d3132_run-01_dwi.bvec (bvec file for scan dwi1)
                 ├── sub-OAS30001_sess-d3132_run-01_dwi.bval (bval file for scan dwi1)
                 └── sub-OAS30001_sess-d3132_run-01_dwi.json (BIDS .json file for scan dwi1)
+```
 
 You can have multiple FreeSurfer output folders in the "freesurfers" directory, and you can have multiple scan session folders in the "scans" directory, and more scan type folders in the scans/session directory (e.g. have an "anat1" or "dwi2" scan in scans/OAS30001_MR_d3132). But for simplicity in this tutorial this tree only shows the data we will be using.
 

@@ -5,7 +5,7 @@ parent: Convert workflow for containerized use
 nav_order: 4
 ---
 
-# Step 5: Update your workflow script to use inputs from the command line.
+# Update your workflow script to use inputs from the command line.
 
 Next you will convert each variable in the variables section of your script to be entered as inputs when running the script via the command line. We will use bash "positional parameters" to do this in a simple way. When we are done, you will run your script by calling the script file name, and then entering each input variable in order, separated by a single space.
 
@@ -52,4 +52,41 @@ When you test the script after this update, you will send each of your variable 
 
 Set up your new command with the variables as input parameters in a text editor and check it to make sure you have the inputs correct. Remove everything from your output folder from the previous test, and try running your script with the variables as inputs. Check to make sure the output in the output folder is identical to how it came out in your previous tests.
 
-Once you are able to send inputs to your script and have the workflow run with them, then you can move on to building a container image to include your script in.
+Once you are able to send inputs to your script and have the workflow run with them, you'll be able to move on to building a container image to include your script in. Before moving to the next steps, in order to keep things organized, set up a new folder in your folder tree called "container_files" and move your finalized script in there. You'll use this folder to store any files that will be a part of your container image build. This step is not entirely essential but will be useful to separate your container inputs from your test data and rough draft scripts.
+
+Create the new directory from your current location in the containerization_tutorial folder:
+```
+mkdir container_files
+```
+
+Then move your finalized script into that directory:
+```
+mv workflow_script.sh container_files
+```
+
+After this section, your final folder tree should look like this:
+
+```
+├── containerization_tutorial (A folder you created for this project)
+    ├── 1-command_list.sh
+    ├── 2-hardcoded_simple.sh
+    ├── 3-generic_inputs.sh
+    ├── freesurfers (folder)
+    │    └── OAS30001_MR_d3132 (FreeSurfer subject folder for OASIS scan session)
+    │        ├── label (standard FreeSurfer output sub-folder with its normal FS output)
+    │        ├── mri (standard FreeSurfer output sub-folder with its normal FS output)
+    │        ├── scripts (standard FreeSurfer output sub-folder with its normal FS output)
+    │        ├── stats (standard FreeSurfer output sub-folder with its normal FS output)
+    │        ├── surf (standard FreeSurfer output sub-folder with its normal FS output)
+    │        └── tmp (standard FreeSurfer output sub-folder with its normal FS output)
+    ├── output (empty folder)
+    ├── scans (folder)
+    │   └── OAS30001_MR_d3132 (folder containing scan subfolders for this OASIS scan session)
+    │       └── dwi1 (folder for scan ID="dwi1" for session "OAS30001_MR_d3132")
+    │           ├── sub-OAS30001_sess-d3132_run-01_dwi.nii.gz (NIFTI file for scan dwi1)
+    │           ├── sub-OAS30001_sess-d3132_run-01_dwi.bvec (bvec file for scan dwi1)
+    │           ├── sub-OAS30001_sess-d3132_run-01_dwi.bval (bval file for scan dwi1)
+    │           └── sub-OAS30001_sess-d3132_run-01_dwi.json (BIDS .json file for scan dwi1)
+    └── container_files (folder) 
+         └── workflow_script.sh (your final tested workflow script file)
+```

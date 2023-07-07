@@ -1,6 +1,7 @@
 ---
-title: Containerization Tutorial Documentation Home
+title: Containerization Tutorial Home
 layout: home
+nav_order: 1
 ---
 
 # Neuroimaging Containerization Tutorial Documentation
