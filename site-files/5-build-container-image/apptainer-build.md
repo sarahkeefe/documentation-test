@@ -22,6 +22,10 @@ Here is my example build command with the definition file from this tutorial:
 apptainer build --fakeroot container_tutorial_1_0-dev.sif apptainer_def.txt
 ```
 
+This will build an Apptainer container image file with the name "container_tutorial_1_0-dev". The last parameter, apptainer_def_file.txt, is the filename of your container image definition file.
+
+### Saving information for future troubleshooting
+
 For Apptainer it is helpful to set some environment variables to tell the Apptainer engine where to store intermediate and log files. 
 - `APPTAINER_CACHEDIR` specifies where cache files should be stored, and should be set to an absolute directory path (The full path to a directory of your choice, starting with `/`). 
 - `APPTAINER_TMPDIR` specifies where temporary build files should go and should also be set to an absolute folder path. 
@@ -32,28 +36,48 @@ export APPTAINER_CACHEDIR=`pwd`/buildcache
 export APPTAINER_TMPDIR=/tmp
 ```
 
-It can also be helpful to add the `--no-cleanup flag` for troubleshooting, although be aware that this will take up more space on your machine.
-Here is the 
+It can also be helpful to add the `--no-cleanup flag` to keep temporary files around in case you need to do any troubleshooting, although this will cause your builds to take up more space on your machine.
 
-apptainer build --fakeroot --no-cleanup edi_workflow_1_0-dev apptainer_def_file.txt
+Here is the example build command with the --no-cleanup flag included:
 
-This will build an Apptainer container image file with the name "container_tutorial_1_0-dev". The last parameter, apptainer_def_file.txt, is the filename of your container image definition file.
+```
+apptainer build --fakeroot --no-cleanup container_tutorial_1_0-dev.sif apptainer_def.txt
+```
 
 More details on the Apptainer build command can be found in the [Apptainer build command documentation].
 
+
 ## Running the build command
 
-To run your build command, make sure you are located in the directory that contains your container definition file and workflow script file along with any other files that you are copying into your container image. This should be the "containerization_tutorial/container_files" directory. 
+To run your build command, make sure your current working directory is the folder that contains your Apptainer definition file and your custom workflow script file along with any other files that you need to copy into your container image. In this example we are using the folder `container_image_files` that we set up earlier. 
+
+Use `pwd` to check your location - you should be in the `containerization_tutorial/container_image_files` folder.
+
+First set the environment varibles for the cache and temporary directories in case you need them:
+```
+export APPTAINER_CACHEDIR=`pwd`/buildcache
+export APPTAINER_TMPDIR=/tmp
+```
 
 From that folder, run your Apptainer build command:
 
 ```
-apptainer build --fakeroot container_tutorial_1_0-dev apptainer_def_file.txt
+apptainer build --fakeroot --no-cleanup container_tutorial_1_0-dev.sif apptainer_def.txt
 ```
 
-The Apptainer engine will go through the build steps in your definition file and run them one by one. 
+The Apptainer engine will go through the build steps in your definition file and run them one by one. Since the main tutorial definition file starts with 
+```
+Bootstrap: docker
+From: freesurfer/freesurfer:7.3.2
+``` 
 
-The build might complete successfully and show a success message at the end. 
+The first step will pull the Docker image tagged freesurfer/freesurfer:7.3.2 and use that as the base of building this Apptainer image.
+
+After that it will proceed through the steps in each section of the definition file.
+
+Since this is hopefully a working tutorial, the build should complete successfully and show a success message at the end:
+
+![successful-apptainer-build](images/successful-apptainer-build.png){:class="img-responsive"}
 
 If the build does not complete, you should see an error message that indicates that the build failed on a particular step. 
 
@@ -61,7 +85,7 @@ If the build does not complete, you should see an error message that indicates t
 
 After a successful build in Apptainer, you should have a file of .sif format in your build directory. In our build example command the filename would be "container_tutorial_1_0-dev.sif".
 
-Once your `apptainer build` command completes, list the files in your current directory:
+Once your `apptainer build` command completes, you can confirm that you have an image file by listing the files in your current directory:
 
 ```
 ls
@@ -69,7 +93,7 @@ ls
 
 If your build completed, you will see the filename of the image you built in the list, like this:
 
-[ INSERT IMAGE OF SUCCESSFUL APPTAINER BUILD IN FILE LIST ]
+![successful-apptainer-image-list](images/successful-apptainer-image-list.png){:class="img-responsive"}
 
 ## If your build failed: Troubleshoot, fix, and rebuild
 

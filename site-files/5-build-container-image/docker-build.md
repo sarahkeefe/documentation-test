@@ -38,7 +38,7 @@ More options for the Docker build command can be found in the [Docker build comm
 
 ## Running the build command
 
-To run your build command, make sure your current working directory is the folder that contains your Dockerfile and script file along with any other files that you are copying into your container image. In this example we are using the folder `container_image_files` that we set up earlier. 
+To run your build command, make sure your current working directory is the folder that contains your Dockerfile and custom workflow script file along with any other files that you are copying into your container image. In this example we are using the folder `container_image_files` that we set up earlier. 
 
 Use `pwd` to check your location - you should be in the `containerization_tutorial/container_image_files` folder.
 

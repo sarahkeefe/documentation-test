@@ -42,12 +42,12 @@ gradient_value=${10}
 
 When you call your script after this update, the first input you send after the script name will go into the variable "scans_dir", then the next one will go into "freesurfers_dir", and so on. So your script call sends the variables in this order:
 ```
-./workflow_script.sh scans_dir freesurfers_dir output_dir session_label dti_scan_id dti_scan_filename dti_bvec_filename dti_bval_filename fi_threshold_value gradient_value
+./run_workflow.sh scans_dir freesurfers_dir output_dir session_label dti_scan_id dti_scan_filename dti_bvec_filename dti_bval_filename fi_threshold_value gradient_value
 ```
 
 When you test the script after this update, you will send each of your variable values when you run it in the command line like this:
 ```
-./workflow_script.sh "scans" "freesurfers" "output" "OAS30001_MR_d3132" "dwi1" "sub-OAS30001_sess-d3132_run-01_dwi.nii.gz" "sub-OAS30001_sess-d3132_run-01_dwi.bvec" "sub-OAS30001_sess-d3132_run-01_dwi.bval" 0.25 0
+./run_workflow.sh scans freesurfers output OAS30001_MR_d3132 dwi1 sub-OAS30001_sess-d3132_run-01_dwi.nii.gz sub-OAS30001_sess-d3132_run-01_dwi.bvec sub-OAS30001_sess-d3132_run-01_dwi.bval 0.25 0
 ```
 
 Set up your new command with the variables as input parameters in a text editor and check it to make sure you have the inputs correct. Remove everything from your output folder from the previous test, and try running your script with the variables as inputs. Check to make sure the output in the output folder is identical to how it came out in your previous tests.
@@ -61,16 +61,18 @@ mkdir container_files
 
 Then move your finalized script into that directory:
 ```
-mv workflow_script.sh container_files
+mv run_workflow.sh container_files
 ```
 
 After this section, your final folder tree should look like this:
 
 ```
 ├── containerization_tutorial (A folder you created for this project)
-    ├── 1-command_list.sh
-    ├── 2-hardcoded_simple.sh
-    ├── 3-generic_inputs.sh
+    ├── step1-workflow_commands_initial.txt
+    ├── step2-workflow_commands_organized.txt
+    ├── step3-initial_workflow_script.sh
+    ├── step4-script_with_hardcoded_inputs.sh
+    ├── step5-script_with_cl_inputs.sh
     ├── freesurfers (folder)
     │    └── OAS30001_MR_d3132 (FreeSurfer subject folder for OASIS scan session)
     │        ├── label (standard FreeSurfer output sub-folder with its normal FS output)
@@ -88,5 +90,5 @@ After this section, your final folder tree should look like this:
     │           ├── sub-OAS30001_sess-d3132_run-01_dwi.bval (bval file for scan dwi1)
     │           └── sub-OAS30001_sess-d3132_run-01_dwi.json (BIDS .json file for scan dwi1)
     └── container_files (folder) 
-         └── workflow_script.sh (your final tested workflow script file)
+         └── run_workflow.sh (your final tested workflow script file)
 ```
