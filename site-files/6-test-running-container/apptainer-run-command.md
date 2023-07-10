@@ -2,7 +2,7 @@
 layout: default
 title: Apptainer run command setup
 parent: Test running your container
-nav_order: 1
+nav_order: 2
 ---
 
 # Set up an Apptainer `exec` command to run your script on some data

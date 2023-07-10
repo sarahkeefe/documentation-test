@@ -155,7 +155,7 @@ docker run container_tutorial:1.0-dev ls /usr/local/bin
 
 Here is what the output looks like:
 
-![docker-run-single-command-ls-scriptfile](images/docker-run-single-command-ls-scriptfile.png){:class="img-responsive"}
+![docker-run-single-command-ls-scriptfile](/documentation-test/images/docker-run-single-command-ls-scriptfile.png){:class="img-responsive"}
 
 Our script file `run_workflow.sh` shows up in that folder.
 
@@ -169,7 +169,7 @@ docker run container_tutorial:1.0-dev env
 
 This will show a list of all the environment variables that are currently set in the container environment, like this:
 
-![docker-run-single-command-env](images/docker-run-single-command-env.png){:class="img-responsive"}
+![docker-run-single-command-env](/documentation-test/images/docker-run-single-command-env.png){:class="img-responsive"}
 
 Some of these came from the original FreeSurfer `freesurfer/freesurfer:7.3.2` base container and carried over when we built on top of it. Some of the FSL environment variables are ones that we set in these lines of the original Dockerfile:
 
@@ -190,7 +190,7 @@ docker run container_tutorial:1.0-dev fslmaths
 
 You'll see the `fslmaths` help block:
 
-![docker-run-single-command-fslmaths](images/docker-run-single-command-fslmaths.png){:class="img-responsive"}
+![docker-run-single-command-fslmaths](/documentation-test/images/docker-run-single-command-fslmaths.png){:class="img-responsive"}
 
 ## Get your container to see your local data
 
@@ -216,11 +216,11 @@ In this sample command, any files that are located on your computer at the path 
 
 Here is what it looks like with real data. Use `cd` to get into your main `containerization_tutorial` directory. This is the one that contains subfolders for scans, freesurfers, container_image_files, and output, as well as the example scripts. 
 
-![docker-tutorial-dir-list](images/docker-tutorial-dir-list.png){:class="img-responsive"}
+![docker-tutorial-dir-list](/documentation-test/images/docker-tutorial-dir-list.png){:class="img-responsive"}
 
 For your script you'll need the folders with your example data, plus you'll want to send an output folder for script output to go into. So ultimately you want to mount the `freesurfers`, `scans`, and `output` folders into your container. On your local computer, these folders are subfolders your current working directory `containerization_tutorial`. Use `pwd` to get the absolute path of your `containerization_tutorial` directory.
 
-![docker-tutorial-dir-pwd](images/docker-tutorial-dir-pwd.png){:class="img-responsive"}
+![docker-tutorial-dir-pwd](/documentation-test/images/docker-tutorial-dir-pwd.png){:class="img-responsive"}
 
 This is the path you'll want to use as the basis for the `A` path - the path to your local folder with your data on your computer. In this case, my containerization tutorial directory is at `/home/usr/sarah/containerization_tutorial`. My data is in these subfolders:
 - Scan files are in `/home/usr/sarah/containerization_tutorial/scans`
@@ -236,7 +236,7 @@ docker run -v /home/usr/sarah/containerization_tutorial/scans:/scans containeriz
 
 In this command, `ls /` will list the files in the `/` folder within a running container, and then the container will stop. In the output of the list, you'll see the folders Docker can see - including scans folder you mounted with -v!
 
-![docker-tutorial-mount-scans-folder-ls1](images/docker-tutorial-mount-scans-folder-ls1.png){:class="img-responsive"}
+![docker-tutorial-mount-scans-folder-ls1](/documentation-test/images/docker-tutorial-mount-scans-folder-ls1.png){:class="img-responsive"}
 
 You can `ls` the `/scans` folder within the container to show what Docker sees in the `/scans` folder with 
 ```
@@ -245,11 +245,11 @@ docker run -v /home/usr/sarah/containerization_tutorial/scans:/scans containeriz
 
 You'll see the session folder:
 
-![docker-tutorial-mount-scans-folder-ls-scans](images/docker-tutorial-mount-scans-folder-ls-scans.png){:class="img-responsive"}
+![docker-tutorial-mount-scans-folder-ls-scans](/documentation-test/images/docker-tutorial-mount-scans-folder-ls-scans.png){:class="img-responsive"}
 
 And when the container finishes running that command, if you list the scans that you can see locally, you'll see the same thing Docker sees.
 
-![docker-tutorial-mount-scans-folder-local-comparison](images/docker-tutorial-mount-scans-folder-local-comparison.png){:class="img-responsive"}
+![docker-tutorial-mount-scans-folder-local-comparison](/documentation-test/images/docker-tutorial-mount-scans-folder-local-comparison.png){:class="img-responsive"}
 
 with that `-v` command and the correct absolute paths, Docker can now see the contents of your `containerization_tutorial/scans` folder.
 
@@ -321,13 +321,12 @@ In each of the `-v` inputs, you'll need to replace `/home/usr/sarah/` with the a
 
 Since the `-v` mount option uses absolute paths, you can actually run this `docker run` command from any folder location on your machine. Paste your entire customized `docker run` command into the command line and press Enter. You should see output from the commands on your screen:
 
-![docker-tutorial-full-run-command-in-action](images/docker-tutorial-full-run-command-in-action.png){:class="img-responsive"}
+![docker-tutorial-full-run-command-in-action](/documentation-test/images/docker-tutorial-full-run-command-in-action.png){:class="img-responsive"}
 
 And when it's done, you should see the expected output files appear in your local `output` folder:
 
-![docker-tutorial-full-run-command-output](images/docker-tutorial-full-run-command-output.png){:class="img-responsive"}
+![docker-tutorial-full-run-command-output](/documentation-test/images/docker-tutorial-full-run-command-output.png){:class="img-responsive"}
 
-## Set up a run command and run a test
 
 ----
 
