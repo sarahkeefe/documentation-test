@@ -5,7 +5,7 @@ parent: Convert workflow for containerized use
 nav_order: 2
 ---
 
-# Step 3: Convert your workflow commands into a simple script file.
+# Convert your workflow commands into a simple script file.
 
 Next we are going to convert your workflow_commands.txt file into a very basic script. This example will convert it into a shell script using bash shell syntax. 
 

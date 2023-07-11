@@ -5,7 +5,7 @@ parent: Convert workflow for containerized use
 nav_order: 3
 ---
 
-# Step 4: Update your initial script to use variables for input.
+# Update your initial script to use variables for input.
 
 Once you are able to run your initial workflow script, the next step will be to start the steps that will make your workflow more generically usable across different input data. For each command in your workflow_script.sh file, you will want to determine which pieces are specific to your data, and change that part of the command to use a variable instead. In our example, the first workflow step is fslroi, called like this:
 
