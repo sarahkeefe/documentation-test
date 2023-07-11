@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Choosing Docker or Singularity/Apptainer
-parent: Getting started
+parent: Introduction
 nav_order: 1
 ---
 

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Container images and containers
-parent: Getting started
+parent: Introduction
 nav_order: 2
 ---
 

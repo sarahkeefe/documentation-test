@@ -7,262 +7,212 @@ nav_order: 2
 
 # Set up an Apptainer `exec` command to run your script on some data
 
+## Apptainer `exec` versus `run`
+
+
+
 ## Apptainer `exec` command overview
 
 The `apptainer exec` command is used to run a container based on the specified container image. What the launched container does depends on the additions and options you send to the command. 
 
-The format of the `docker run` command is like this:
+The format of the `apptainer exec` command is like this:
 
 ```
-docker run [OPTIONS] imagetag:imageversion [COMMAND] [ARG...]
+apptainer exec [OPTIONS] image_filename.sif [COMMAND] [ARG...]
 ```
 
 Where you would make the following replacements:
-- `[OPTIONS]` gets replaced with any number of option flags that the command can take in
-- `imagetag:imageversion` gets replaced with the tag and version of an image you want to run a container of
-- `[COMMAND]` gets replaced with a command you want to run within the container you launch (We will use this, but it is technically optional)
-- `[ARG...]` gets replaced with any arguments to your command from `[COMMAND]` (This is only needed if you are including a `[COMMAND]`)
+- `[OPTIONS]` gets replaced with any number of option flags that the `apptainer exec` command can take in. There are a number of options you can include which are documented in the [Apptainer exec command documentation].
+- `image_filename.sif` gets replaced with the filename of the apptainer image file you built, that you want to run a container from.
+- `[COMMAND]` gets replaced with a command you want to run within the container you launch
+- `[ARG...]` gets replaced with any arguments to your command from `[COMMAND]` (This is optional depending on your `[COMMAND]`)
 
-There are a number of options you can include with the `docker run` command, which you can investigate in the [Docker run command documentation]. For now we will go through some simple examples that are relevant to this tutorial. 
+The text `[COMMAND]` can be replaced with any command-line command you want to run within your container. It will run it exactly as though you were running it in the environment of the container image you built and configured. Eventually we'll use your custom workflow script command in place of `[COMMAND]`, but for now we will show some simpler examples.
 
+## Example `apptainer exec` command with our example image and `ls`
 
-## Basic `docker run` command with our example
-
-A very basic Docker run command with no options included, and using the tutorial image name and tag, looks like this:
+A very basic Apptainer `exec` command with a sample command COMAND and using the tutorial image file we just built, looks like this:
 ```
-docker run container_tutorial:1.0-dev
-```
-
-We're specifying that we want `docker run` to create a container from our image `container_tutorial:1.0-dev`. 
-
-If you enter that in your command line and press Enter, this command will launch a container from our tutorial container image. However, it will stop immediately and finish the command pretty quickly:
-
-![docker-run-without-options-or-command](images/docker-run-without-options-or-command.png){:class="img-responsive"}
-
-since no input options or within-container `[COMMAND]` were specified. Some more specific options are required to work with a container you create. 
-
-The main examples we will look at are **interacting with a container directly**, and **running a specific command in a container**. To run your workflow script we will do the latter: send a specific command-line command to your container. First we'll take a quick look at how to run a container in interactive mode to take actions directly within a running container.
-
-
-## Interacting with a container directly (Interactive mode)
-
-Later in this tutorial we'll be creating `docker run` commands that tell Docker Engine to create a container from your image and send a single command directly to that container. Here is a quick demo of another way to work with a container: you can run a container from your image in *interactive mode*.
-
-The option flags `-i` and `-t` can be used with `docker run` and your container tag, like this:
-
-```
-docker run -i -t container_tutorial:1.0-dev
+apptainer exec container_tutorial_1_0-dev.sif COMMAND
 ```
 
-Running that command will start up a container based on the image tagged `container_tutorial:1.0-dev` and run it in your command line in interactive mode. When you enter that command and press Enter, you'll see a command prompt with a different label that indicates you are inside a running container from your image.
+This command is specifying that we want `apptainer exec` to create a container from our image `container_tutorial_1_0-dev.sif` and then run the sample command COMMAND in it.
 
-![docker-run-interactive-mode](images/docker-run-interactive-mode.png){:class="img-responsive"}
-
-You are inside an instance of your container! You now have an input/output terminal inside an instance of your container image, and all the instructions you entered in your Dockerfile have been incorporated into this environment. 
-
-Our Dockerfile example is built on top of the base container "freesurfer/freesurfer:7.3.2", which uses CentOS as its operating system, and uses a `bash` shell by default. This means you can run bash shell commands for a CentOS Linux system from here, as long as the commands either come with the operating system by default or have been installed via instructions in your Dockerfile. You can get the default working directory[^1] that you have automatically been placed into with `pwd`:
-
-![docker-run-interactive-mode-pwd](images/docker-run-interactive-mode-pwd.png){:class="img-responsive"}
-
-You can also get operating system info with `cat /etc/os-release`: 
-
-![docker-run-interactive-mode-os-release](images/docker-run-interactive-mode-os-release.png){:class="img-responsive"}
-
-If we had added an entrypoint or initial command to our container build Dockerfile with the `ENTRYPOINT`[^2] or `CMD`[^3] instructions, running our container would execute those commands by default (in slightly different ways depending on whether you used `ENTRYPOINT` or `CMD`). We didn't add either of those instructions, so no commands will get run by default when you start an instance of your container - in this case, starting a container instance with your `docker run` command will just start a container from it with no commands sent to it. 
-
-Since there aren't any commands to run or complete from the Dockerfile or specified in the `docker run` command - you just have the container open in interactive mode - the container will just keep running. 
-
-Check that out by opening another terminal on the same machine you are working on, and run the command:
-
+Here is the same `exec` command that will run `ls`, the command to list the files within the container:
 ```
-docker ps
+apptainer exec container_tutorial_1_0-dev.sif ls
 ```
 
-The output of this command will display the list of currently running containers on your system. You should see a single instance of your container image running. 
+This tells `apptainer exec` to create a container from our image `container_tutorial_1_0-dev.sif` and then run the `ls` command in it to list the files within the container system.
 
-![docker-run-interactive-mode-active-container](images/docker-run-interactive-mode-active-container.png){:class="img-responsive"}
+If you enter that in your command line and press Enter, this command will launch a container from the tutorial container image and perform the `ls` command in it.
 
-When you run a container from an image, Docker gives the container a name[^4] that you can then use to terminate the container with the command
+![apptainer-exec-with-ls](documentation-test/images/apptainer-exec-with-ls.png){:class="img-responsive"}
 
-```
-docker kill CONTAINER_NAME
-```
+Apptainer will perform the `ls` command within the container that generated and display what the container is able to view. In this case, I am seeing the same as the contents of my current directory:  
 
-In this case, my auto-generated container name is `charming_margulis` so I would terminate my endless container with
+![apptainer-exec-with-ls-and-local-ls](documentation-test/images/apptainer-exec-with-ls-and-local-ls.png){:class="img-responsive"}
 
-```
-docker kill charming_margulis
-```
+This may be confusing, especially if you've previously worked with Docker. I didn't specify to copy any of my local folders or files into this container image, and I don't want anyone else who uses my container to see my personal files, so is this still a shareable, independent container image that will work on any system?
 
-If you return to the terminal window where you were in your container, you'll be able to see that the container process terminated when you ran the `docker kill` command from the other window, and you've been returned to your standard command prompt on your local system.
+Yes! What is appearing in the within-container `ls` is not actually a copy of your files. What is happening is that your home directory on your computer is being automatically **mounted** into your container - Apptainer is able to connect the container to your computer and make your computer's files visible to the container. That means your container can see the same folders and files that you can, and (importantly) the container can *make changes to them* too.
 
-Goodnight, `charming_margulis`.
+This may actually differ slightly depending on settings your system administrator has chosen for your Apptainer installation. 
+By default Apptainer will mount `$HOME`, `/sys`, `/proc`, `/tmp`, `/var/tmp`, `/etc/resolv.conf`, `/etc/passwd`, and `$PWD`. `$HOME` is an environment variable that indicates your user home directory and is typically located at `/home/usr/yourusername` or `/home/yourusername`. `$PWD` is an environment variable indicating your current working directory. If you are in a directory or subdirectory of one of those paths when you run `apptainer exec` that will automatically be your default directory in the container.
 
+Apptainer incorporates your system information, user information, and existing user permissions when doing this mounting, so you only have access and privileges on the same files you have access and privileges to on your local computer. So when someone else runs a container based on your container image on their system, they won't see your files or directories that you're seeing right now - they will see their own, based on the system where they are running your container image.
 
-## Running a specific command within a container
-
-Next we'll be setting up `docker run` commands that create a container from your image and then run a single command in that container. 
-
-Here is a quick reminder of the format of the `docker run` command:
+You can run the container without this default mounting of your `$HOME` directory by including the `--no-home` option, like this:
 
 ```
-docker run [OPTIONS] imagetag:imageversion [COMMAND] [ARG...]
+apptainer exec --no-home container_tutorial_1_0-dev.sif ls
 ```
 
-We want to send a command in the `[COMMAND]` section, and use our image tag. Adding options in the `[OPTIONS]` part is optional so we'll leave it out for now, for simplicity. 
+When you run that, you'll see all the same files you would see in the container's root directory, `/`, like this:
 
-Sending a command would be formatted like this:
+![apptainer-exec-with-ls-no-home](documentation-test/images/apptainer-exec-with-ls-no-home.png){:class="img-responsive"}
 
-```
-docker run container_tutorial:1.0-dev [COMMAND]
-```
+And if you get the default working directory with `pwd` when you use `apptainer exec --no-home` you'll see the root directory path:
 
-The text `[COMMAND]` can be replaced with any command-line command you want to run within your container. It will run it exactly as though you were running it in interactive mode in the previous section. Eventually we'll use your custom workflow script command in place of `[COMMAND]`, but for now we will show some simpler examples.
+![apptainer-exec-with-pwd-no-home](documentation-test/images/apptainer-exec-with-pwd-no-home.png){:class="img-responsive"}
 
+More details on Apptainer mounting or bind paths, and the default locations, can be found in the [Apptainer bind path documentation]. 
 
-### Print the default working directory in the container with `pwd`
+To run your workflow script we will do a more complicated version of the `apptainer exec containerfile.sif COMMAND` command that will call your script's command-line command in an instance of your container. 
 
-First we'll send the same first command we tried in interactive mode: showing the default working directory in the container by sending in the `pwd` command. Using our example build tag from earlier, and the command `pwd`, our run command will look like this: 
+In addition to running single commands with `apptainer exec`, Apptainer also offers functionality to run a container and take actions directly within the container while it's running. This is done using the `apptainer shell` command. Check out the [Apptainer shell command documentation]for more details. That is the equivalent of the `-i` flag for `docker run` and will create a container instance for you and pin it to your command line so you can work directly within the environment of a container.
 
-```
-docker run container_tutorial:1.0-dev ls
-```
-
-This will run a container based on your `container_tutorial:1.0-dev` image, run that `pwd` command, and then end the container process. It will show you the output from the container, and then end the container process so you can run another command.
-
-![docker-run-single-command-pwd](images/docker-run-single-command-pwd.png){:class="img-responsive"}
+The rest of this section focuses on launching a container and executing a single command in that container, after which the container will automatically complete and stop running. 
 
 
-### List files in the container with `ls`
+### Use `apptainer exec` to show where your script file is within the container
 
-You can list the files in that default working directory of your container by sending in the `ls` command like this:
-
-![docker-run-single-command-ls-root](images/docker-run-single-command-ls-root.png){:class="img-responsive"}
-
-That command lists the files as though you were located in the default directory in interactive mode. In this example, that directory contains a default Documents folder that was originally in the base container and also some leftover files from the installation steps that were in the Dockerfile.
-
-We could have copied our custom workflow script into the default directory and it would have shown up in that file list. But in the tutorial Dockerfile example, the COPY instruction that copied our `run_workflow.sh` script file into the container did this instead:
+Our goal is to call your custom workflow script using your container image file and the `apptainer exec` command. To do that, we'll need to call the script from where it is located in the container. In the tutorial image definition file example, the instruction in the `%files` section specified this for our `run_workflow.sh` script file:
 
 ```
-COPY run_workflow.sh /usr/local/bin/run_workflow.sh
+run_workflow.sh /usr/local/bin/run_workflow.sh
 ```
 
-The `run_workflow.sh` file got copied into `/usr/local/bin`. So if we list the files in `/usr/local/bin` within our container, we should see that file name in the list. Here is the command to run an instance of our container image and then list the files in that specific directory:
+The `run_workflow.sh` file got copied into `/usr/local/bin`. So if we list the files in `/usr/local/bin` within an instance of our container, we should see that file name in the list. Here is the `apptainer exec` command to run an instance of our container image and then list the files in that specific directory:
 
 ```
-docker run container_tutorial:1.0-dev ls /usr/local/bin
+apptainer exec container_tutorial_1_0-dev.sif ls /usr/local/bin
 ```
 
 Here is what the output looks like:
 
-![docker-run-single-command-ls-scriptfile](images/docker-run-single-command-ls-scriptfile.png){:class="img-responsive"}
+![apptainer-exec-ls-scriptfile](documentation-test/images/apptainer-exec-ls-scriptfile.png){:class="img-responsive"}
 
-Our script file `run_workflow.sh` shows up in that folder.
+Our script file `run_workflow.sh` shows up in the `/usr/local/bin` folder within a running container.
 
 ### Show environment variables with env
 
 Another useful bash shell command to run before we go further is to check out what environment variables are set within the container with `env`, like this:
 
 ```
-docker run container_tutorial:1.0-dev env
+apptainer exec container_tutorial_1_0-dev.sif env
 ```
 
 This will show a list of all the environment variables that are currently set in the container environment, like this:
 
-![docker-run-single-command-env](images/docker-run-single-command-env.png){:class="img-responsive"}
+![apptainer-exec-single-command-env](documentation-test/images/apptainer-exec-single-command-env.png){:class="img-responsive"}
 
-Some of these came from the original FreeSurfer `freesurfer/freesurfer:7.3.2` base container and carried over when we built on top of it. Some of the FSL environment variables are ones that we set in these lines of the original Dockerfile:
-
-```
-ENV FSLDIR /usr/local/fsl
-
-ENV FSLMULTIFILEQUIT TRUE
-ENV FSLOUTPUTTYPE NIFTI_GZ
-
-ENV PATH $FSLDIR/bin:$PATH
-```
-
-The FSL and FreeSurfer-specific environment variables will be important for running functions from those programs, and the `PATH` variable is important since that is a list of folders where our container will look for program files[^5], for example where it will look for programs we installed like `fslmaths`. In fact, you can 100% confirm that your container knows where `fslmaths` is by running
+Some of these came from the original FreeSurfer `freesurfer/freesurfer:7.3.2` base container and carried over when we built on top of it. Some of these are identical to environment variables on your local system and have been carried over by Apptainer from your local computer into the container. Some of the FSL environment variables are ones that we set in these lines in the `%environment` section of the original container image definition file:
 
 ```
-docker run container_tutorial:1.0-dev fslmaths
+export FSLDIR=/usr/local/fsl
+
+export FSLMULTIFILEQUIT=TRUE
+export FSLOUTPUTTYPE=NIFTI_GZ
+
+export PATH=$FSLDIR/bin:$PATH
+```
+
+The FSL and FreeSurfer-specific environment variables will be important for running functions from those programs, and the `PATH` variable is important since that is a list of folders where our container will look for program files[^1], for example where it will look for programs we installed like `fslmaths`. In fact, you can 100% confirm that your container knows where `fslmaths` is by running
+
+```
+apptainer exec container_tutorial_1_0-dev.sif fslmaths
 ```
 
 You'll see the `fslmaths` help block:
 
-![docker-run-single-command-fslmaths](images/docker-run-single-command-fslmaths.png){:class="img-responsive"}
+![apptainer-exec-single-command-fslmaths](documentation-test/images/apptainer-exec-single-command-fslmaths.png){:class="img-responsive"}
+
+More details on how Apptainer handles environment variables can be found in the [Apptainer environment and metadata documentation].
 
 ## Get your container to see your local data
 
-The container is an isolated environment that is entirely separate from your local files, programs, environment variables, and data. This means that by default, your container has no access any files that haven't been copied in via a Dockerfile `RUN` instruction. You'll need to run your workflow script on specific imaging data, so you need a way to get your imaging dataset into the container. 
+The container is intended as an isolated environment that is entirely separate from your local files, programs, environment variables, and data. As described earlier, Apptainer mounts your local directories by default. But this doesn't necessarily mean your container will automatically have access to the input files needed to run your script. Your system may have a different configuration of Apptainer, or you might need to point your container at files that are on another filesystem or directory, which can happen in high-performance computing cluster setups. 
 
-You could technically copy it all in with a bunch of Dockerfile `RUN` commands during your `docker build` step, but that's not a great idea - it'll increase the container image size considerably, plus you want to be able to share your container image but not give the world access to your dataset. A relatively simple way to get your container to see your local files without permanently storing them in the container image is to "mount" a folder with your data in it into your container with a "bind mount". 
+Your container by default won't have access to any files that are outside the directories that Apptainer mounts by default or haven't been copied in via the container definition file. You'll need to run your workflow script on specific imaging data, so you need a way to get your imaging dataset into the container. 
 
-The `-v` flag is the option flag that can be used to mount data into your container. When mounting a folder with `-v`, you send the `-v` option as part of the `docker run` command options section like this:
+You could technically copy all your data files in in the `%run` section of your container image definition file, which would copy all your files into the container image during the `apptainer build` step, but that's not a great idea - it'll increase the container image size considerably, plus you want to be able to share your container image but not give the world access to your dataset. What you need to do to get your container to see your local files without permanently storing them in the container image is to add your own "mount" of a folder with your data in it. This is added as an option to the `apptainer exec` command.
 
-```
-docker run -v A:B container_tutorial:1.0-dev [COMMAND]
-```
-
-To mount a folder, `-v` should be followed by a string in the format `A:B` as shown above. `A` needs to be replaced with the absolute path (starting with a `/`) to the folder on your local computer that you want your Docker container to see. `B` should be replaced with the absolute path (starting with `/`) of where you want that folder to "appear" within a running container (so the location where your container will think that folder is).
-
-Here is that sample command with `-v` shown with a more accurate-looking example of the `A` and `B` folder paths
+The `-B` or `--bind` flag is the option flag that can be used to mount data into your container. When mounting a folder with `-B`, you send the `-B` option as part of the `apptainer exec` command options section like this:
 
 ```
-docker run -v /full/path/to/localfolder:/containerdata container_tutorial:1.0-dev [COMMAND]
+apptainer exec -B X:Y container_tutorial_1_0-dev.sif [COMMAND]
+```
+
+To mount a folder, `-B` should be followed by a string in the format `X:Y` as shown above. `X` needs to be replaced with the absolute path (starting with a `/`) to the folder on your local computer that you want your Docker container to see. `Y` should be replaced with the absolute path (starting with `/`) of where you want that folder to "appear" within a running container (so the location where your container will think that folder is).
+
+Here is that sample command with `-B` shown with a more accurate-looking example of the `X` and `Y` folder paths
+
+```
+apptainer exec -B /full/path/to/localfolder:/containerdata container_tutorial_1_0-dev.sif [COMMAND]
 ``` 
 
-In this sample command, any files that are located on your computer at the path `/full/path/to/localfolder` will show up in the folder `/containerdata` in Docker.
+In this sample command, any files that are located on your computer at the path `/full/path/to/localfolder` will show up in the folder `/containerdata` in the container that gets launched.
 
 Here is what it looks like with real data. Use `cd` to get into your main `containerization_tutorial` directory. This is the one that contains subfolders for scans, freesurfers, container_image_files, and output, as well as the example scripts. 
 
-![docker-tutorial-dir-list](images/docker-tutorial-dir-list.png){:class="img-responsive"}
+![apptainer-tutorial-dir-list](documentation-test/images/apptainer-tutorial-dir-list.png){:class="img-responsive"}
 
 For your script you'll need the folders with your example data, plus you'll want to send an output folder for script output to go into. So ultimately you want to mount the `freesurfers`, `scans`, and `output` folders into your container. On your local computer, these folders are subfolders your current working directory `containerization_tutorial`. Use `pwd` to get the absolute path of your `containerization_tutorial` directory.
 
-![docker-tutorial-dir-pwd](images/docker-tutorial-dir-pwd.png){:class="img-responsive"}
+![apptainer-tutorial-dir-pwd](documentation-test/images/apptainer-tutorial-dir-pwd.png){:class="img-responsive"}
 
-This is the path you'll want to use as the basis for the `A` path - the path to your local folder with your data on your computer. In this case, my containerization tutorial directory is at `/home/usr/sarah/containerization_tutorial`. My data is in these subfolders:
-- Scan files are in `/home/usr/sarah/containerization_tutorial/scans`
-- FreeSurfer files are in `/home/usr/sarah/containerization_tutorial/freesurfers`
-- The empty output directory I created is in `/home/usr/sarah/containerization_tutorial/output`
+This is the path you'll want to use as the basis for the `X` path - the path to your local folder with your data on your computer. In this case, my containerization tutorial directory is at `/home/sarah/containerization_tutorial`. My data is in these subfolders:
+- Scan files are in `/home/sarah/containerization_tutorial/scans`
+- FreeSurfer files are in `/home/sarah/containerization_tutorial/freesurfers`
+- The empty output directory I created is in `/home/sarah/containerization_tutorial/output`
 
-Now for choosing the `B` path. This can be any folder path that doesn't already exist within the container. It can be any path because you'll be telling your script to look there anyway, since a couple of your script input parameters are paths to a folder of scans, path to a folder of freesurfers, and path to an empty output directory. It has to be an absolute path starting with `/`. For mapping the `scans` directory I'll map it to the very simple path `/scans` - A folder called `scans` located in the base `/` directory in the container folder structure.
+Now for choosing the `Y` path. This can be any folder path that doesn't already exist within the container. It can be any path because you'll be telling your script to look there anyway, since a couple of your script input parameters are paths to a folder of scans, path to a folder of freesurfers, and path to an empty output directory. It has to be an absolute path starting with `/`. For mapping the `scans` directory I'll map it to the very simple path `/scans` - A folder called `scans` located in the base `/` directory in the container folder structure.
 
-Here is a `docker run` command that will mount my example local scans folder into the container at path `/scans`, and then run the `ls /` command within that container:
+Here is an `apptainer exec` command that will mount my example local scans folder into the container at path `/scans`, and then run the `ls /` command within that container:
 ```
-docker run -v /home/usr/sarah/containerization_tutorial/scans:/scans containerization_tutorial:1.0-dev ls /
+apptainer exec -B /home/sarah/containerization_tutorial/scans:/scans container_tutorial_1_0-dev.sif ls /
 ```
 
-In this command, `ls /` will list the files in the `/` folder within a running container, and then the container will stop. In the output of the list, you'll see the folders Docker can see - including scans folder you mounted with -v!
+In this command, the `ls /` at the end of the command will list the files in the `/` folder within a running container, and then the container will stop running. In the output of the list, you'll see the folders your container can see - including scans folder you mounted with `-B`:
 
-![docker-tutorial-mount-scans-folder-ls1](images/docker-tutorial-mount-scans-folder-ls1.png){:class="img-responsive"}
+![apptainer-tutorial-mount-scans-folder-ls1](documentation-test/images/apptainer-tutorial-mount-scans-folder-ls1.png){:class="img-responsive"}
 
 You can `ls` the `/scans` folder within the container to show what Docker sees in the `/scans` folder with 
 ```
-docker run -v /home/usr/sarah/containerization_tutorial/scans:/scans containerization_tutorial:1.0-dev ls /scans
+apptainer exec -B /home/sarah/containerization_tutorial/scans:/scans container_tutorial_1_0-dev.sif ls /scans
 ```
 
 You'll see the session folder:
 
-![docker-tutorial-mount-scans-folder-ls-scans](images/docker-tutorial-mount-scans-folder-ls-scans.png){:class="img-responsive"}
+![apptainer-tutorial-mount-scans-folder-ls-scans](documentation-test/images/apptainer-tutorial-mount-scans-folder-ls-scans.png){:class="img-responsive"}
 
-And when the container finishes running that command, if you list the scans that you can see locally, you'll see the same thing Docker sees.
+And when the container finishes running that command, if you list the scans that you can see locally, you'll see the same thing your container sees.
 
-![docker-tutorial-mount-scans-folder-local-comparison](images/docker-tutorial-mount-scans-folder-local-comparison.png){:class="img-responsive"}
+![apptainer-tutorial-mount-scans-folder-local-comparison](documentation-test/images/apptainer-tutorial-mount-scans-folder-local-comparison.png){:class="img-responsive"}
 
-with that `-v` command and the correct absolute paths, Docker can now see the contents of your `containerization_tutorial/scans` folder.
+with that `-B` command and the correct absolute paths, your Apptainer container can now see the contents of your `containerization_tutorial/scans` folder.
 
-To map multiple folders in a `docker run` command, you add extra `-v A:B` options like this:
+To map multiple folders in an `apptainer exec` command, you add extra `-B X:Y` options like this:
 
 ```
-docker run -v A1:B1 -v A2:B2 -v A3:B3 container_tutorial:1.0-dev [COMMAND]
+apptainer exec -B X1:Y1 -B X2:Y2 -B X3:Y3 container_tutorial_1_0-dev.sif [COMMAND]
 ```
 
 Here is my example with the `scans` folder mapped to `/scans` in the container, `freesurfers` mapped to `/freesurfers`, and `output` mapped to `/output`:
 
 ```
-docker run -v /home/usr/sarah/containerization_tutorial/scans:/scans -v /home/usr/sarah/containerization_tutorial/freesurfers:/freesurfers -v /home/usr/sarah/containerization_tutorial/output:/output container_tutorial:1.0-dev ls /
+apptainer exec -B /home/sarah/containerization_tutorial/scans:/scans -B /home/sarah/containerization_tutorial/freesurfers:/freesurfers -B /home/sarah/containerization_tutorial/output:/output container_tutorial_1_0-dev.sif ls /
 ```
 
 The `ls /` will show the list of folders the container can see and include the newly mounted `freesurfers` and `output` directories you added on.
@@ -270,9 +220,9 @@ The `ls /` will show the list of folders the container can see and include the n
 
 ## Setting up a command to run your script within the container
 
-Now that you can send your files to the container it's time to set up a run command specific to your workflow script. As you can see the run command has a bunch of different parts and can get pretty long, so it's useful to set up your command in a text editor and then paste it into your command line when you are sure it's ready to run.
+Now that you can send your files to the container it's time to set up an exec command specific to your workflow script. As you can see the exec command has a bunch of different parts and can get pretty long, so it's useful to set up your command in a text editor and then paste it into your command line when you are sure it's ready to run.
 
-You'll want to combine the `docker run` command with the correct mounted data folders with the correct `[COMMAND]` to run your workflow script within the container.
+You'll want to combine the `apptainer exec` command with the correct mounted data folders with the correct `[COMMAND]` to run your workflow script within the container.
 
 Here is a reminder of how to call your run_workflow.sh script after the last part of the the workflow script setup:
 ```
@@ -286,10 +236,10 @@ Here is the script command with your specific inputs that you tested earlier fro
 
 Now to adapt this to run within the container.
 
-As mentioned in an earlier section, your Docker file copied the `run_workflow.sh` into `/usr/local/bin`. You can confirm again with this container run and list command:
+As mentioned in an earlier section, your Apptainer container image definition file copied the `run_workflow.sh` into `/usr/local/bin`. You can confirm again with this container run and list command:
 
 ```
-docker run container_tutorial:1.0-dev ls /usr/local/bin
+apptainer exec container_tutorial_1_0-dev.sif ls /usr/local/bin
 ```
 
 So when you call your script command in the container, you'll use `/usr/local/bin/run_workflow.sh` instead of `./run_workflow.sh`, like this:
@@ -298,7 +248,7 @@ So when you call your script command in the container, you'll use `/usr/local/bi
 /usr/local/bin/run_workflow.sh scans_dir freesurfers_dir output_dir session_label dti_scan_id dti_scan_filename dti_bvec_filename dti_bval_filename fi_threshold_value gradient_value
 ```
 
-The first 3 inputs to your script command are the `scans_dir` for scan file directory, `freesurfers_dir` for the freesurfers directory, and `output_dir` for the directory to send output files to. This the Now you know how to mount those three folders into a running instance of your container. When you update your script call for your in-container run, you'll enter Docker's mounted locations of those folders as the inputs. So since Docker sees your local `scans` folder at `/scans`, your local `freesurfers` folder at `/freesurfers`, and your local `output` folder at `/output`, you would send the folder paths Docker can see sa those inputs to the script, like this:
+The first 3 inputs to your script command are the `scans_dir` for scan file directory, `freesurfers_dir` for the freesurfers directory, and `output_dir` for the directory to send output files to. Now you know how to mount those three folders into a running instance of your container. When you update your run_workflow.sh script call for your in-container run, you'll enter the Apptainer mounted locations of those folders as the inputs. So since your container sees your local `scans` folder at `/scans`, your local `freesurfers` folder at `/freesurfers`, and your local `output` folder at `/output`, you would send the folder paths your container can see as those inputs to the script, like this:
 
 ```
 /usr/local/bin/run_workflow.sh /scans /freesurfers /output session_label dti_scan_id dti_scan_filename dti_bvec_filename dti_bval_filename fi_threshold_value gradient_value
@@ -309,31 +259,32 @@ That takes care of where the inputs and outputs come from - every other input to
 /usr/local/bin/run_workflow.sh /scans /freesurfers /output OAS30001_MR_d3132 dwi1 sub-OAS30001_sess-d3132_run-01_dwi.nii.gz sub-OAS30001_sess-d3132_run-01_dwi.bvec sub-OAS30001_sess-d3132_run-01_dwi.bval 0.25 0
 ```
 
-That's the container-specific `[COMMAND]` part you want to send to your `docker run` command. Combine that with the command that mounts your data directories to get the full run command for your custom workflow:
+That's the container-specific `[COMMAND]` part you want to send to your `apptainer exec` command. Combine that with the command that mounts your data directories to get the full run command for your custom workflow:
 
 ```
-docker run -v /home/usr/sarah/containerization_tutorial/scans:/scans -v /home/usr/sarah/containerization_tutorial/freesurfers:/freesurfers -v /home/usr/sarah/container_tutorial/output:/output container_tutorial:1.0-dev /usr/local/bin/run_workflow.sh /scans /freesurfers /output OAS30001_MR_d3132 dwi1 sub-OAS30001_sess-d3132_run-01_dwi.nii.gz sub-OAS30001_sess-d3132_run-01_dwi.bvec sub-OAS30001_sess-d3132_run-01_dwi.bval 0.25 0
+apptainer exec -B /home/sarah/containerization_tutorial/scans:/scans -B /home/sarah/containerization_tutorial/freesurfers:/freesurfers -B /home/sarah/container_tutorial/output:/output container_tutorial_1_0-dev.sif /usr/local/bin/run_workflow.sh /scans /freesurfers /output OAS30001_MR_d3132 dwi1 sub-OAS30001_sess-d3132_run-01_dwi.nii.gz sub-OAS30001_sess-d3132_run-01_dwi.bvec sub-OAS30001_sess-d3132_run-01_dwi.bval 0.25 0
 ```
 
-In each of the `-v` inputs, you'll need to replace `/home/usr/sarah/` with the absolute path to where your `containerization_tutorial` directory is located, to tell Docker to mount your data locations on your specific system.
+In each of the `-B` inputs, you'll need to replace `/home/usr/sarah/` with the absolute path to where your `containerization_tutorial` directory is located, to tell Apptainer to mount your data locations on your specific system.
 
 ## Run your run command
 
-Since the `-v` mount option uses absolute paths, you can actually run this `docker run` command from any folder location on your machine. Paste your entire customized `docker run` command into the command line and press Enter. You should see output from the commands on your screen:
+Since the `-B` mount option uses absolute paths, you can actually run this `apptainer exec` command from any folder location on your machine. Paste your entire customized `apptainer exec` command into the command line and press Enter. You should see output from the commands on your screen:
 
-![docker-tutorial-full-run-command-in-action](images/docker-tutorial-full-run-command-in-action.png){:class="img-responsive"}
+![apptainer-tutorial-full-exec-command-in-action](documentation-test/images/apptainer-tutorial-full-run-command-in-action.png){:class="img-responsive"}
 
 And when it's done, you should see the expected output files appear in your local `output` folder:
 
-![docker-tutorial-full-run-command-output](images/docker-tutorial-full-run-command-output.png){:class="img-responsive"}
+![apptainer-tutorial-full-exec-command-output](documentation-test/images/apptainer-tutorial-full-exec-command-output.png){:class="img-responsive"}
 
-## Set up a run command and run a test
+
 
 ----
 
-[^1]: [You can actually see where the FreeSurfer team set the default directory by looking at the Image Layers for the freesurfer/freesurfer:732 image on Docker Hub.](https://hub.docker.com/layers/freesurfer/freesurfer/7.3.2/images/sha256-af1f78ae2fae323470ff49a29b2a94cf51f129d50b7d60a094eed2c7d0f07438?context=explore).
-[^2]: [More details on Docker ENTRYPOINT setup within a Dockerfile can be found in the Dockerfile reference guide.](https://docs.docker.com/engine/reference/builder/#entrypoint).
-[^3]: [More details on Docker CMD setup within a Dockerfile can be found in the Dockerfile reference guide.](https://docs.docker.com/engine/reference/builder/#cmd).
-[^4]: [Very charmingly named as an adjective plus a scientist.](https://github.com/moby/moby/blob/master/pkg/namesgenerator/names-generator.go).
-[^5]: [A quick overview of the PATH variable can be found on Wikipedia and in many other Unix resources elsewhere.](https://en.wikipedia.org/wiki/PATH_(variable)).
-[^6]: [The other option is a "volume" setup but this tutorial will just look at simple "bind mounts". More details in the Docker documentation.](https://docs.docker.com/storage/).
+[Apptainer exec command documentation]: https://apptainer.org/docs/user/main/cli/apptainer_exec.html
+[Apptainer bind path documentation]: https://apptainer.org/docs/user/main/bind_paths_and_mounts.html#system-defined-bind-paths
+[Apptainer shell command documentation]: https://apptainer.org/docs/user/main/cli/apptainer_shell.html
+[Apptainer environment and metadata documentation]: https://apptainer.org/docs/user/main/environment_and_metadata.html
+
+
+[^1]: [A quick overview of the PATH variable can be found on Wikipedia and in many other Unix resources elsewhere.](https://en.wikipedia.org/wiki/PATH_(variable)).

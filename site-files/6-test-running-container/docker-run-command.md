@@ -18,7 +18,7 @@ docker run [OPTIONS] imagetag:imageversion [COMMAND] [ARG...]
 ```
 
 Where you would make the following replacements:
-- `[OPTIONS]` gets replaced with any number of option flags that the command can take in
+- `[OPTIONS]` gets replaced with any number of option flags that the `docker run` command can take in
 - `imagetag:imageversion` gets replaced with the tag and version of an image you want to run a container of
 - `[COMMAND]` gets replaced with a command you want to run within the container you launch (We will use this, but it is technically optional)
 - `[ARG...]` gets replaced with any arguments to your command from `[COMMAND]` (This is only needed if you are including a `[COMMAND]`)
@@ -37,7 +37,7 @@ We're specifying that we want `docker run` to create a container from our image 
 
 If you enter that in your command line and press Enter, this command will launch a container from our tutorial container image. However, it will stop immediately and finish the command pretty quickly:
 
-![docker-run-without-options-or-command](images/docker-run-without-options-or-command.png){:class="img-responsive"}
+![docker-run-without-options-or-command](documentation-test/images/docker-run-without-options-or-command.png){:class="img-responsive"}
 
 since no input options or within-container `[COMMAND]` were specified. Some more specific options are required to work with a container you create. 
 
@@ -56,17 +56,17 @@ docker run -i -t container_tutorial:1.0-dev
 
 Running that command will start up a container based on the image tagged `container_tutorial:1.0-dev` and run it in your command line in interactive mode. When you enter that command and press Enter, you'll see a command prompt with a different label that indicates you are inside a running container from your image.
 
-![docker-run-interactive-mode](images/docker-run-interactive-mode.png){:class="img-responsive"}
+![docker-run-interactive-mode](documentation-test/images/docker-run-interactive-mode.png){:class="img-responsive"}
 
 You are inside an instance of your container! You now have an input/output terminal inside an instance of your container image, and all the instructions you entered in your Dockerfile have been incorporated into this environment. 
 
 Our Dockerfile example is built on top of the base container "freesurfer/freesurfer:7.3.2", which uses CentOS as its operating system, and uses a `bash` shell by default. This means you can run bash shell commands for a CentOS Linux system from here, as long as the commands either come with the operating system by default or have been installed via instructions in your Dockerfile. You can get the default working directory[^1] that you have automatically been placed into with `pwd`:
 
-![docker-run-interactive-mode-pwd](images/docker-run-interactive-mode-pwd.png){:class="img-responsive"}
+![docker-run-interactive-mode-pwd](documentation-test/images/docker-run-interactive-mode-pwd.png){:class="img-responsive"}
 
 You can also get operating system info with `cat /etc/os-release`: 
 
-![docker-run-interactive-mode-os-release](images/docker-run-interactive-mode-os-release.png){:class="img-responsive"}
+![docker-run-interactive-mode-os-release](documentation-test/images/docker-run-interactive-mode-os-release.png){:class="img-responsive"}
 
 If we had added an entrypoint or initial command to our container build Dockerfile with the `ENTRYPOINT`[^2] or `CMD`[^3] instructions, running our container would execute those commands by default (in slightly different ways depending on whether you used `ENTRYPOINT` or `CMD`). We didn't add either of those instructions, so no commands will get run by default when you start an instance of your container - in this case, starting a container instance with your `docker run` command will just start a container from it with no commands sent to it. 
 
@@ -80,7 +80,7 @@ docker ps
 
 The output of this command will display the list of currently running containers on your system. You should see a single instance of your container image running. 
 
-![docker-run-interactive-mode-active-container](images/docker-run-interactive-mode-active-container.png){:class="img-responsive"}
+![docker-run-interactive-mode-active-container](documentation-test/images/docker-run-interactive-mode-active-container.png){:class="img-responsive"}
 
 When you run a container from an image, Docker gives the container a name[^4] that you can then use to terminate the container with the command
 
@@ -130,14 +130,14 @@ docker run container_tutorial:1.0-dev ls
 
 This will run a container based on your `container_tutorial:1.0-dev` image, run that `pwd` command, and then end the container process. It will show you the output from the container, and then end the container process so you can run another command.
 
-![docker-run-single-command-pwd](images/docker-run-single-command-pwd.png){:class="img-responsive"}
+![docker-run-single-command-pwd](documentation-test/images/docker-run-single-command-pwd.png){:class="img-responsive"}
 
 
 ### List files in the container with `ls`
 
 You can list the files in that default working directory of your container by sending in the `ls` command like this:
 
-![docker-run-single-command-ls-root](images/docker-run-single-command-ls-root.png){:class="img-responsive"}
+![docker-run-single-command-ls-root](documentation-test/images/docker-run-single-command-ls-root.png){:class="img-responsive"}
 
 That command lists the files as though you were located in the default directory in interactive mode. In this example, that directory contains a default Documents folder that was originally in the base container and also some leftover files from the installation steps that were in the Dockerfile.
 
@@ -298,7 +298,7 @@ So when you call your script command in the container, you'll use `/usr/local/bi
 /usr/local/bin/run_workflow.sh scans_dir freesurfers_dir output_dir session_label dti_scan_id dti_scan_filename dti_bvec_filename dti_bval_filename fi_threshold_value gradient_value
 ```
 
-The first 3 inputs to your script command are the `scans_dir` for scan file directory, `freesurfers_dir` for the freesurfers directory, and `output_dir` for the directory to send output files to. This the Now you know how to mount those three folders into a running instance of your container. When you update your script call for your in-container run, you'll enter Docker's mounted locations of those folders as the inputs. So since Docker sees your local `scans` folder at `/scans`, your local `freesurfers` folder at `/freesurfers`, and your local `output` folder at `/output`, you would send the folder paths Docker can see sa those inputs to the script, like this:
+The first 3 inputs to your script command are the `scans_dir` for scan file directory, `freesurfers_dir` for the freesurfers directory, and `output_dir` for the directory to send output files to. Now you know how to mount those three folders into a running instance of your container. When you update your script call for your in-container run, you'll enter Docker's mounted locations of those folders as the inputs. So since Docker sees your local `scans` folder at `/scans`, your local `freesurfers` folder at `/freesurfers`, and your local `output` folder at `/output`, you would send the folder paths Docker can see as those inputs to the script, like this:
 
 ```
 /usr/local/bin/run_workflow.sh /scans /freesurfers /output session_label dti_scan_id dti_scan_filename dti_bvec_filename dti_bval_filename fi_threshold_value gradient_value
@@ -329,6 +329,8 @@ And when it's done, you should see the expected output files appear in your loca
 
 
 ----
+
+[Docker run command documentation]: https://docs.docker.com/engine/reference/commandline/run/
 
 [^1]: [You can actually see where the FreeSurfer team set the default directory by looking at the Image Layers for the freesurfer/freesurfer:732 image on Docker Hub.](https://hub.docker.com/layers/freesurfer/freesurfer/7.3.2/images/sha256-af1f78ae2fae323470ff49a29b2a94cf51f129d50b7d60a094eed2c7d0f07438?context=explore).
 [^2]: [More details on Docker ENTRYPOINT setup within a Dockerfile can be found in the Dockerfile reference guide.](https://docs.docker.com/engine/reference/builder/#entrypoint).
