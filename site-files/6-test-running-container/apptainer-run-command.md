@@ -9,7 +9,18 @@ nav_order: 2
 
 ## Apptainer `exec` versus `run`
 
+Two Apptainer commands to launch a container from an image are `exec` and `run`. 
 
+`apptainer exec` will do the equivalent of running a single command in a shell within your container, enabling you to run one command and then end the container. `exec` allows you to use your container to call any command you want.
+
+`apptainer run` expects a container image to have a built-in run script that was specified in an additional `%runscript` section of your image definition file. Using `run` requires a built-in run script to be included at the image build step and limits your container to calling the run script only.
+
+`apptainer run` is a great way to incorporate your run_workflow.sh script into your container image if you only have a single command you will ever want to run with your container image. You could easily update your image definition file to include a `%runscript` section with your script command in it, and then use `apptainer run` to call that script.
+
+Since I want to show examples of running some simple commands within a container, I will be using `exec` in this tutorial. 
+
+More details on `apptainer run` can be found in the [Apptainer run command documentation].
+More details on `apptainer exec` can be found in the [Apptainer exec command documentation].
 
 ## Apptainer `exec` command overview
 
@@ -281,6 +292,7 @@ And when it's done, you should see the expected output files appear in your loca
 
 ----
 
+[Apptainer run command documentation]: https://apptainer.org/docs/user/main/cli/apptainer_run.html
 [Apptainer exec command documentation]: https://apptainer.org/docs/user/main/cli/apptainer_exec.html
 [Apptainer bind path documentation]: https://apptainer.org/docs/user/main/bind_paths_and_mounts.html#system-defined-bind-paths
 [Apptainer shell command documentation]: https://apptainer.org/docs/user/main/cli/apptainer_shell.html
