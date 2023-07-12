@@ -220,13 +220,14 @@ cat ${input_file} | while IFS=, read -r session_label dti_scan_id fi_threshold_v
 	# We now have the required inputs for our command.
 	# Replace the command inputs with our variables determined above.
 	# Run the command in detached mode with "-d" and send the output to a log file
-	apptainer_cmd="apptainer exec -B ${scans_dir}:/scans -B ${freesurfers_dir}:/freesurfers -B ${output_dir}:/output container_tutorial_1_0-dev.sif /usr/local/bin/run_workflow.sh /scans /freesurfers /output ${session_label} ${dti_scan_id} ${nifti_filename} ${bvec_filename} ${bval_filename} ${fi_threshold_value} ${gradient_value} > ${log_filepath}"
+	apptainer_cmd="apptainer exec -B ${scans_dir}:/scans -B ${freesurfers_dir}:/freesurfers -B ${output_dir}:/output container_tutorial_1_0-dev.sif /usr/local/bin/run_workflow.sh /scans /freesurfers /output ${session_label} ${dti_scan_id} ${nifti_filename} ${bvec_filename} ${bval_filename} ${fi_threshold_value} ${gradient_value}"
 
 	# Output the full Apptainer command you are going to run to the console
-	echo ${apptainer_cmd}
+	echo ${apptainer_cmd} > ${log_filepath} 
 
 	# Use bash "eval" to run the Apptainer command
-	eval ${apptainer_cmd}
+	# use "nohup" first to run the container process in the background
+	eval ${apptainer_cmd} &
 
 	# Done with this row in the CSV
 	echo "Apptainer container launched for session label=${session_label}, DTI scan ID=${dti_scan_id}"
