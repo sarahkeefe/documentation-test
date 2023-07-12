@@ -37,7 +37,7 @@ Within the contents of that script file, `$1` or `${1}` refers to the first inpu
 
 ## Updating your script to use input values
 
-Open `convert-workflow/step4-script_with_hardcoded_inputs.sh` in your text editor.
+Open `convert-workflow-steps/step4-script_with_hardcoded_inputs.sh` in your text editor.
 
 For each line in your script where you set a new variable - in our example, the lines above - replace the value in quotes with the numbers 1 through 10, with brackets and a dollar sign to let bash know you are setting each variable to the value of the positional parameter at that number. So our updated variable lines in our script would look like this:
 
@@ -82,45 +82,14 @@ Check to make sure the output in the output folder is identical to how it came o
 
 Once you are able to send inputs to your script and have your workflow run with them, you'll be able to move on to building a container image to include your script in. 
 
-## Organization for the next steps in the tutorial
+## Continue with the tutorial
 
-Before moving to the next steps, in order to keep things organized, set up a new folder in your `containerization_tutorial` folder tree called `container_image_files`:
+For this tutorial example, you updated the `convert-workflow-stepsstep4-script_with_hardcoded_inputs.sh` file to a script that takes command-line inputs called `inputs_workflow.sh`. An example of our updated script file for this step is at `convert-workflow-steps/step5-script_with_cl_inputs.sh`. 
 
-```
-mkdir container_image_files
-```
+The next step of the tutorial assumes that you are using `convert-workflow-steps/step5-script_with_cl_inputs.sh` as your final converted script. A copy of that "final script" is already in the `containerization_tutorial/container_image_files` folder under the name `run_workflow.sh`. This is the script we will use and run for the rest of the guide.
 
-You'll use this `container_image_files` folder to store all the files that will be a part of your container image build.
+The next sections of the tutorial, [Create image definition file] and [Build the container image], will incorporate the contents of the `container_image_files` folder into your container image build.
 
-Copy your finalized script in there with the name `run_workflow.sh`:
-```
-cp inputs_workflow.sh container_image_files/run_workflow.sh
-```
-
-To be sure you are using a workflow script that matches the expected tutorial output, you can instead use the example final script file from this part of the tutorial, `convert-workflow/step5-script_with_cl_inputs.sh`, and copy that file into `container_image_files` with the filename `run_workflow.sh`.
-
-After this section, your folder tree should look something like this:
-```
-├── containerization_tutorial (A folder you created for this project)
-    ├── single_file_workflow.sh
-    ├── variables_workflow.sh
-    ├── inputs_workflow.sh
-    ├── freesurfers (folder)
-    │    └── OAS30001_MR_d3132 (FreeSurfer subject folder for OASIS scan session)
-    │        ├── label (standard FreeSurfer output sub-folder with its normal FS output)
-    │        ├── mri (standard FreeSurfer output sub-folder with its normal FS output)
-    │        ├── scripts (standard FreeSurfer output sub-folder with its normal FS output)
-    │        ├── stats (standard FreeSurfer output sub-folder with its normal FS output)
-    │        ├── surf (standard FreeSurfer output sub-folder with its normal FS output)
-    │        └── tmp (standard FreeSurfer output sub-folder with its normal FS output)
-    ├── output (empty folder)
-    ├── scans (folder)
-    │   └── OAS30001_MR_d3132 (folder containing scan subfolders for this OASIS scan session)
-    │       └── dwi1 (folder for scan ID="dwi1" for session "OAS30001_MR_d3132")
-    │           ├── sub-OAS30001_sess-d3132_run-01_dwi.nii.gz (NIFTI file for scan dwi1)
-    │           ├── sub-OAS30001_sess-d3132_run-01_dwi.bvec (bvec file for scan dwi1)
-    │           ├── sub-OAS30001_sess-d3132_run-01_dwi.bval (bval file for scan dwi1)
-    │           └── sub-OAS30001_sess-d3132_run-01_dwi.json (BIDS .json file for scan dwi1)
-    └── container_image_files (folder) 
-         └── run_workflow.sh (your final tested workflow script file)
-```
+----
+[Create image definition file]:https://sarahkeefe.github.io/documentation-test/4-create-image-definition-file/
+[Build the container image]:https://sarahkeefe.github.io/documentation-test/5-build-the-container-image/

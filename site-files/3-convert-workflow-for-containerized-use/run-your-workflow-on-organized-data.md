@@ -5,58 +5,75 @@ parent: Convert workflow for containerized use
 nav_order: 2
 ---
 
-# Set up your workflow commands to run on a folder structure containing organized data.
+# Run your workflow commands on organized data.
 
 To begin converting your workflow steps into a single script for containerized use, you'll want to test the commands in order on structured data.
 
 ## Organize your input data and create an output folder.
 
-First, set up a folder structure with sample input data.
+In the [Using the tutorial files] section earlier, you should have set up a copy of the tutorial example script files and data files. Use this folder structure to test the workflow commands.
 
-Here is the folder structure that this example will use. This expects that you will start with 3 folders in your working directory: 
+Use `cd` to get into your `containerization_tutorial` folder.
+
+Your folder tree when you are in that folder should look something like this:
+```
+├── container_image_files
+│     ├── apptainer_def.txt
+│     ├── Dockerfile
+│     ├── license.txt
+│     ├── parc
+│     │     └── Schaefer2018_200Parcels_7Networks_order_FSLMNI152_2mm.nii.gz
+│     └── run_workflow.sh
+├── convert-workflow-steps
+│     ├── step1-workflow_commands_initial.txt
+│     ├── step2-workflow_commands_organized.txt
+│     ├── step3-initial_workflow_script.sh
+│     ├── step4-script_with_hardcoded_inputs.sh
+│     └── step5-script_with_cl_inputs.sh
+├── freesurfers
+│     ├── containerization_tutorial_fs_to_download.csv
+│     ├── download_oasis_freesurfer.sh
+│     └── OAS30001_MR_d3132
+│         ├── label
+│         │     └── [FreeSurfer output files]
+│         ├── mri
+│         │     └── [FreeSurfer output files]
+│         ├── scripts
+│         │     └── [FreeSurfer output files]
+│         ├── stats
+│         │     └── [FreeSurfer output files]
+│         ├── surf
+│         │     └── [FreeSurfer output files]
+│         └── tmp
+│             └── [FreeSurfer output files]
+├── output
+└── scans
+    ├── containerization_tutorial_scans_to_download.csv
+    ├── download_oasis_scans.sh
+    └── OAS30001_MR_d3132
+        ├── anat1
+        │     └── [scan files]
+        ├── dwi1
+        │     └── [scan files]
+        └── [other scan folders]
+```
+
+index/readme files, specific Freesurfer output files, and scan files have been omitted from this representation, but your general folder structure should be the same but contain those extra files.
+
+You are starting with 3 folders in this working directory: 
 - `freesurfers` containing FreeSurfer output folders
 - `scans` containing folders of imaging scan files for each scan session (in this case downloaded from OASIS-3 in BIDS format), and 
 - an empty directory called `output` for your output to be saved into. 
 
 This input is specific to the example workflow being demonstrated, but for your future workflow customization you can adjust this to be more specific to what data you are testing with and how your data is stored on your system.
 
-For following along with this tutorial, you can clone the containerizing-neuroimaging-workflows Github repository and start with the contents of the `containerization_tutorial` subfolder. To get the example data, obtain access to the OASIS-3 dataset via the data use agreement at [oasis-brains.org]. Once you have access to XNAT Central you can use it to download the scans and FreeSurfer output for session `OAS30001_MR_d3132` and ensure it is organized as suggested below.
-
-Here is the folder tree of the folder and file organization we are starting with. 
-
-```
-├── containerization_tutorial (A folder you created for this project)
-    ├── freesurfers (folder)
-    │    └── OAS30001_MR_d3132 (FreeSurfer subject folder for OASIS scan session)
-    │        ├── label (standard FreeSurfer output sub-folder with its normal FS output)
-    │        ├── mri (standard FreeSurfer output sub-folder with its normal FS output)
-    │        ├── scripts (standard FreeSurfer output sub-folder with its normal FS output)
-    │        ├── stats (standard FreeSurfer output sub-folder with its normal FS output)
-    │        ├── surf (standard FreeSurfer output sub-folder with its normal FS output)
-    │        └── tmp (standard FreeSurfer output sub-folder with its normal FS output)
-    ├── output (empty folder)
-    └── scans (folder)
-        └── OAS30001_MR_d3132 (folder containing scan subfolders for this OASIS scan session)
-            └── dwi1 (folder for scan ID="dwi1" for session "OAS30001_MR_d3132")
-                ├── sub-OAS30001_sess-d3132_run-01_dwi.nii.gz (NIFTI file for scan dwi1)
-                ├── sub-OAS30001_sess-d3132_run-01_dwi.bvec (bvec file for scan dwi1)
-                ├── sub-OAS30001_sess-d3132_run-01_dwi.bval (bval file for scan dwi1)
-                └── sub-OAS30001_sess-d3132_run-01_dwi.json (BIDS .json file for scan dwi1)
-```
-
-You can have multiple FreeSurfer output folders in the "freesurfers" directory, and you can have multiple scan session folders in the "scans" directory, and more scan type folders in the scans/session directory (e.g. have an "anat1" or "dwi2" scan in scans/OAS30001_MR_d3132). But for simplicity in this tutorial this tree only shows the data we will be using.
+You could have multiple FreeSurfer output folders in the `freesurfers` directory, and you could have multiple scan session folders in the `scans` directory, and more scan type folders in the `scans/OAS30001_MR_d3132` directory (e.g. have an "anat1" or "dwi2" scan in scans/OAS30001_MR_d3132). But for simplicity in this tutorial this tree only shows the data we will be using.
 
 ## Look at the list of commands
 
-Access your organized `containerization_tutorial` folder via the command line. The command below will be different for you based on where your folder is located in your file system.
+Open the file `convert-workflow-steps/step1-workflow_commands_initial.txt` from the tutorial Github repository in a text editor. It can be helpful to have a command line terminal open while also using a GUI text editor such as Sublime Text or Notepad++. You can also do everything via the terminal and use a terminal-based text editor instead.
 
-```
-cd containerization_tutorial
-```
-
-Open the file `convert-workflow/step1-workflow_commands_initial.txt` from the tutorial Github repository in a text editor. It can be helpful to have a command line terminal open while also using a GUI text editor such as Sublime Text or Notepad++. You can also do everything via the terminal and use a terminal-based text editor instead.
-
-The `convert-workflow/step1-workflow_commands_initial.txt` file is a list of commands that we will be converting into a script that will be usable within a container on more generalized data. 
+The `convert-workflow-steps/step1-workflow_commands_initial.txt` file is a list of commands that we will be converting into a script that will be usable within a container on more generalized data. 
 
 We will be going through the workflow commands one at a time and updating them to run on our organized data. 
 
@@ -157,28 +174,28 @@ As you test, make sure the commands are being run in order without any manual in
 
 ## Re-set your output directory and run a single test of all steps in order.
 
-When you have worked through testing and updating each command in `convert-workflow/step1-workflow_commands_initial.txt` and expect that each command will work with the previous command's output, do a final test of all the steps in order to be sure. Remove everything in the output folder:
+When you have worked through testing and updating each command in `convert-workflow-steps/step1-workflow_commands_initial.txt` and expect that each command will work with the previous command's output, do a final test of all the steps in order to be sure. Remove everything in the output folder:
 ```
 rm -r output/*
 ```
 
-Then run each line from your updated `convert-workflow/step1-workflow_commands_initial.txt` file and ensure you can run the lines in order with no intervention.
+Then run each line from your updated `convert-workflow-steps/step1-workflow_commands_initial.txt` file and ensure you can run the lines in order with no intervention.
 
 When you are done, you should be able to:
 - Start from your `containerization_tutorial` directory
 - Start with only the source files in their organized structure 
 - Start with an empty output folder
-- Run each command in your updated version of `convert-workflow/step1-workflow_commands_initial.txt` in the command line one-by-one, exactly as you have it saved, and get to the next step without needing to do any manual file changes
-- Have generated files from your entire workflow after you have run all the updated commands in `convert-workflow/step1-workflow_commands_initial.txt`
+- Run each command in your updated version of `convert-workflow-steps/step1-workflow_commands_initial.txt` in the command line one-by-one, exactly as you have it saved, and get to the next step without needing to do any manual file changes
+- Have generated files from your entire workflow after you have run all the updated commands in `convert-workflow-steps/step1-workflow_commands_initial.txt`
 
 The files in the `output` folder should be what you would expect to get when you run your workflow.
 Once you have this working, move on to the next step.
 
 ## Continue with the tutorial
 
-For this tutorial example, your updated `convert-workflow/step1-workflow_commands_initial.txt` file after this process should look similar to `convert-workflow/step2-workflow_commands_organized.txt`. The next step of the tutorial will use the contents of the step 2 file.
+For this tutorial example, your updated `convert-workflow-steps/step1-workflow_commands_initial.txt` file after this process should look similar to `convert-workflow-steps/step2-workflow_commands_organized.txt`. The next step of the tutorial will start with the step 2 file.
 
 ----
 
-[oasis-brains.org]: https://www.oasis-brains.org
+[Using the tutorial files]:https://sarahkeefe.github.io/documentation-test/1-getting-started/using-the-tutorial-files.html
 [Github file raw view]: https://raw.githubusercontent.com/sarahkeefe/documentation-test/main/convert-workflow/step1-workflow_commands_initial.txt

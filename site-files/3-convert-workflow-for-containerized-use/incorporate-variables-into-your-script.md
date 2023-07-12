@@ -11,7 +11,7 @@ Once you are able to run your initial workflow script, the next step will be to 
 
 For more background on what we are doing with this step, here is a page with some [documentation and examples on using variables in bash scripting].
 
-Open the file `convert-workflow/step3-initial_workflow_script.sh` in a text editor.
+Open the file `convert-workflow-steps/step3-initial_workflow_script.sh` in a text editor.
 
 ## Determining what parts should become variables
 
@@ -33,7 +33,7 @@ All of this information is likely to change if you were to try to run your workf
 
 ## Create a variables section and start converting
 
-Create a new section at the beginning of your script where your variables will be set. In our completed example for this step, `convert-workflow/step4-script_with_hardcoded_inputs.sh`, we created a new section at the beginning for input variables and added comments describing what each input is. 
+Create a new section at the beginning of your script where your variables will be set. In our completed example for this step, `convert-workflow-steps/step4-script_with_hardcoded_inputs.sh`, we created a new section at the beginning for input variables and added comments describing what each input is. 
 
 Go through each item in the first command and convert it to use a variable instead. For our example, we looked at the `scans` folder first. Someone else running this script might have their scans stored in a folder that's named something else. So to update it to be more generic, change the command to use a variable called `scans_dir` instead:
 ```
@@ -97,7 +97,7 @@ Make sure the results come out identical to your previous tests of your entire w
 
 ## Continue with the tutorial
 
-For this tutorial example, you updated `convert-workflow/step3-initial_workflow_script.sh` file to a simple script called `variables_workflow.sh`. An example of our updated script file for this step is at `step4-script_with_hardcoded_inputs`. The next step of the tutorial will build on top of the contents of the step 4 file.
+For this tutorial example, you updated `convert-workflow-steps/step3-initial_workflow_script.sh` file to a simple script called `variables_workflow.sh`. An example of our updated script file for this step is at `convert-workflow-steps/step4-script_with_hardcoded_inputs`. The next step of the tutorial will build on top of the contents of the step 4 file.
 
 ----
 [documentation and examples on using variables in bash scripting]:https://linuxopsys.com/topics/assign-variable-bash

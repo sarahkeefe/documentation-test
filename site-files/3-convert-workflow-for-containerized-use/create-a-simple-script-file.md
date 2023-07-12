@@ -7,9 +7,9 @@ nav_order: 3
 
 # Convert your workflow commands into a simple script file.
 
-Next we are going to convert your updated command list file from step 1 into a very basic script. This example will convert it into a shell script using bash shell syntax. The file we will be converting in this tutorial step is `convert-workflow/step2-workflow_commands_organized.txt`.
+Next we are going to convert your updated command list file from step 1 into a very basic script. This example will convert it into a shell script using bash shell syntax. The file we will be converting in this tutorial step is `convert-workflow-steps/step2-workflow_commands_organized.txt`.
 
-Open `convert-workflow/step2-workflow_commands_organized.txt` in a text editor. To start to convert it into a usable bash script, add a "shebang" line at the beginning to indicate the script is in the bash scripting language:
+Open `convert-workflow-steps/step2-workflow_commands_organized.txt` in a text editor. To start to convert it into a usable bash script, add a "shebang" line at the beginning to indicate the script is in the bash scripting language:
 ```
 #!/bin/bash
 ```
@@ -60,6 +60,6 @@ Once you run your `single_file_workflow.sh` file in the command line, check the 
 
 ## Continue with the tutorial
 
-For this tutorial example, you updated `convert-workflow/step2-workflow_commands_organized.txt` file to a simple script called `single_file_workflow.sh`. An example of our updated script file for this step is at `step3-initial_workflow_script.sh`. This update includes some cleaned up comments and printout statements for each step in the workflow. The next step of the tutorial will use the contents of the step 3 file.
+For this tutorial example, you updated `convert-workflow-steps/step2-workflow_commands_organized.txt` file to a simple script called `single_file_workflow.sh`. An example of our updated script file for this step is at `convert-workflow-steps/step3-initial_workflow_script.sh`. This update includes some cleaned up comments and printout statements for each step in the workflow. The next step of the tutorial will use the contents of the step 3 file.
 
 
