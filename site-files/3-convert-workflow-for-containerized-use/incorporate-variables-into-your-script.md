@@ -17,7 +17,7 @@ Open the file `convert-workflow-steps/step3-initial_workflow_script.sh` in a tex
 
 In our example, the first workflow step is `fslroi`, called like this:
 
-```sh-wrap
+```text
 fslroi scans/OAS30001_MR_d3132/dwi1/sub-OAS30001_sess-d3132_run-01_dwi.nii.gz output/OAS30001_MR_d3132_nodif.nii.gz 0 1
 ```
 
