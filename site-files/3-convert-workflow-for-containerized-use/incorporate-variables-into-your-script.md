@@ -17,7 +17,7 @@ Open the file `convert-workflow-steps/step3-initial_workflow_script.sh` in a tex
 
 In our example, the first workflow step is `fslroi`, called like this:
 
-```bash
+```
 fslroi scans/OAS30001_MR_d3132/dwi1/sub-OAS30001_sess-d3132_run-01_dwi.nii.gz output/OAS30001_MR_d3132_nodif.nii.gz 0 1
 ```
 
@@ -36,7 +36,7 @@ All of this information is likely to change if you were to try to run your workf
 Create a new section at the beginning of your script where your variables will be set. In our completed example for this step, `convert-workflow-steps/step4-script_with_hardcoded_inputs.sh`, we created a new section at the beginning for input variables and added comments describing what each input is. 
 
 Go through each item in the first command and convert it to use a variable instead. For our example, we looked at the `scans` folder first. Someone else running this script might have their scans stored in a folder that's named something else. So to update it to be more generic, change the command to use a variable called `scans_dir` instead:
-```bash
+```
 fslroi ${scans_dir}/OAS30001_MR_d3132/dwi1/sub-OAS30001_sess-d3132_run-01_dwi.nii.gz output/OAS30001_MR_d3132_nodif.nii.gz 0 1
 ```
 
@@ -49,7 +49,7 @@ scans_dir="scans"
 In the next part, our command is looking for a specific session folder within the `scans` folder or `scans_dir`. In our example data organization, we will always expect that the `scans_dir` contains multiple folders, each named for one scan session, with each folder containing data for that scan session. The scan session we are looking for in the `scans_dir` is `OAS30001_MR_d3132`. This can be abstracted to a variable so a user can run this code on any scan session that has a folder in the `scans` directory. In our example we are calling this variable `session_label` and are expecting that the scan file folder and the FreeSurfer output folder will both share this name. We also want to use this session label in our output file names, so we can use that same variable in the output file name as well. 
 
 The updated `fslroi` command will look like this:
-```sh
+```
 fslroi ${scans_dir}/${session_label}/dwi1/sub-OAS30001_sess-d3132_run-01_dwi.nii.gz output/${session_label}_nodif.nii.gz 0 1
 ```
 
