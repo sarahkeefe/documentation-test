@@ -4,6 +4,5 @@ This is the repository for "Containerizing neuroimaging workflows for scalable a
 
 
 <p align="center">
-|[Neuroimaging Containerization Tutorial Documentation](https://sarahkeefe.github.io/containerizing-neuroimaging-workflows/)|
-|---|
+### [Neuroimaging Containerization Tutorial Documentation](https://sarahkeefe.github.io/containerizing-neuroimaging-workflows/)
 </p>
